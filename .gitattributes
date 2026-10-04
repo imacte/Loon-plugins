@@ -1,0 +1,11 @@
+* text=auto eol=lf
+
+# 插件源文件必须保持 LF，避免在 Windows 上被转成 CRLF 后校验脚本或 Loon 解析异常
+*.plugin text eol=lf
+*.mjs    text eol=lf
+*.yml    text eol=lf
+*.json   text eol=lf
+*.md     text eol=lf
+
+# 二进制
+*.png binary
