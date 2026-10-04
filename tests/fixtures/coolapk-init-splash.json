@@ -1,0 +1,47 @@
+{
+  "data": [
+    {
+      "entityType": "card",
+      "entityFixed": 0,
+      "subTitle": "tabConfig",
+      "entityId": 6390,
+      "extraDataArr": {
+        "SplashAd.Type": "GM_SPLASH | 5156243 | 102140761",
+        "SplashAd.Expires": 900,
+        "SplashAd.onResume": 1,
+        "SplashAd.resumeType": "GM_SPLASH | 5156243 | 102140761",
+        "SplashAd.resumeExpires": "60",
+        "SplashAd.openType": "swipe_or_click",
+        "SplashAd.sensorDelay": "1",
+        "SplashAd.sensitivity": "11",
+        "SplashAd.timeout": "4000",
+        "Ad.TT_APP_ID": "5014732",
+        "Ad.GM_APP_ID": "5014732",
+        "Ad.GDT_APP_ID": "1107915162",
+        "Ad.KS_APP_ID": "625000001",
+        "Ad.BZ_APP_ID": "20605",
+        "Ad.TO_APP_ID": "a65a4ddf5221e5",
+        "Ad.TO_APP_KEY": "ae16d834b9ccd8d46f967c00291f4cde3",
+        "Ad.TANX_APP_ID": "101876",
+        "Ad.TANX_APP_KEY": "35014804",
+        "Ad.PRELOAD": "1",
+        "Ad.DOWNLOAD_POPUP": "1",
+        "Ad.SPLASH_DOWNLOAD_POPUP": "1",
+        "Ad.SPLASH_RETRY_PERIOD": "300",
+        "Ad.CLICK_BUTTON_AREA": "0",
+        "Ad.GROWTH_BACK_PRESS": "0",
+        "Ad.SHOW_DOWNLOAD_BAR": "1",
+        "Ad.CHANGE_AFTER_SHOW": "0",
+        "Ad.PRELOAD_AFTER_USE": "0",
+        "Ad.PRELOAD_THRESHOLD": "1.8",
+        "Ad.ADLOAD_POS_ID": "102082499",
+        "Ad.PRELOAD_THRESHOLD_IOS": "1.8",
+        "SplashAd.hType": "GM_SPLASH | 5156243 | 103293853",
+        "selectedHomeTab": "V9_HOME_TAB_HEADLINE",
+        "Bitmap.CompressType": "mixed",
+        "MediaPlayer.jar.md5": "1a56caf88fdc5e60cd6f51958914b418",
+        "Headline.HeadStyle": "v12"
+      }
+    }
+  ]
+}

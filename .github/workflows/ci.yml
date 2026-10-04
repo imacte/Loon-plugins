@@ -22,9 +22,13 @@ jobs:
       - name: 校验插件并检查产物是否同步
         run: node tools/build.mjs --check
 
+      - name: 用 fixture 验证开屏广告改写规则
+        run: node tools/verify-splash.mjs
+
       - name: 检查 JSON 可解析
         run: |
           node -e "JSON.parse(require('fs').readFileSync('gallery.json','utf8')); console.log('gallery.json OK')"
+          node -e "JSON.parse(require('fs').readFileSync('tests/fixtures/coolapk-init-splash.json','utf8')); console.log('fixture OK')"
 
       - name: 检查中文标点与全角空格
         run: |

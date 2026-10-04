@@ -12,6 +12,7 @@
 
 | 插件 | 说明 | 标签 | 安装 |
 | --- | --- | --- | --- |
+| **酷安 开屏广告拦截** | 直接改掉酷安自己 /v6/main/init 下发的开屏广告配置（穿山甲 GroMore 聚合，site 5156243），关掉「切回前台也弹」和「广告预加载」，并把摇一摇/滑动误触的灵敏度归零。不需要拦截广告 SDK 域名，因此不怕素材被预缓存。 | `去广告` `酷安` `开屏广告` | [一键导入](https://www.nsloon.com/openloon/import?plugin=https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-SplashAd-Block.plugin) · [源文件](https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-SplashAd-Block.plugin) |
 | **去广告·淘宝/天猫/酷安** | 拦截淘宝、天猫、酷安中仍在放行的广告 SDK（阿里妈妈 Tanx、穿山甲、京东联盟）、埋点上报、设备指纹与推广落地页。规则由真实抓包 30_1791116195395 生成，6 个开关可按需裁剪。 | `去广告` `淘宝` `天猫` `酷安` | [一键导入](https://www.nsloon.com/openloon/import?plugin=https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock.plugin) · [源文件](https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock.plugin) |
 | **去广告·淘宝/酷安（规则版）** | 与「去广告·淘宝/天猫/酷安」同一份域名清单，改用 Rule 规则在连接层直接拦截。不需要开启 MitM，不做证书解密，适合不想装证书或想彻底掐断广告域名的场景。 | `去广告` `淘宝` `天猫` `酷安` | [一键导入](https://www.nsloon.com/openloon/import?plugin=https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock-Rule.plugin) · [源文件](https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock-Rule.plugin) |
 
@@ -85,6 +86,60 @@ https://raw.githubusercontent.com/imacte/Loon-plugins/main/gallery.json
 
 ---
 
+## 酷安开屏广告（重点）
+
+抓包样本：`32_1791120312806`（跳京东）、`30_1791116195395`（跳淘宝）。
+
+### 为什么拦域名没用
+
+两个抓包对比下来结论很明确：
+
+- `32` 这次，穿山甲域名配置 `tnc3-aliec2.zijieapi.com/get_domains` **已经被拦成 `{}`**，酷安照样弹开屏、照样跳京东；
+- `32` 的 Coolapk 阶段总共只有 4 个请求，**完全没有广告请求**——因为广告是**预加载**的（`Ad.PRELOAD = "1"`），素材在你看不到的时候就已经拉好缓存在本地了；
+- 点击跳转走的是 iOS deeplink，网络层工具拦不到 scheme。
+
+所以「拦广告 SDK 域名」只能阻止**下一次**拉取，拦不住已经在缓存里的那条广告。
+
+### 真正的开关在酷安自己的接口里
+
+`GET https://api.coolapk.com/v6/main/init` 的 `extraDataArr` 里直接下发了全套开屏广告配置：
+
+| 键 | 实测值 | 含义 |
+| --- | --- | --- |
+| `SplashAd.Type` | `GM_SPLASH \| 5156243 \| 102140761` | 穿山甲 GroMore 聚合开屏，`5156243` 就是 pangle_site_id |
+| `SplashAd.hType` | `GM_SPLASH \| 5156243 \| 103293853` | 第二个广告位 |
+| `SplashAd.onResume` | `1` | **切回前台也弹开屏** |
+| `SplashAd.resumeExpires` | `"60"` | 60 秒后切回前台就再弹一次 |
+| `SplashAd.Expires` | `900` | 配置缓存 15 分钟，所以热启动照样弹 |
+| `SplashAd.openType` | `"swipe_or_click"` | **滑动也算点击** |
+| `SplashAd.sensitivity` | `"11"` | **摇一摇灵敏度 11，极易误触跳转** |
+| `Ad.PRELOAD` | `"1"` | 广告预加载 |
+| `Ad.TANX_APP_ID` / `Ad.GM_APP_ID` / `Ad.GDT_APP_ID` / `Ad.KS_APP_ID` / `Ad.BZ_APP_ID` | … | 聚合的各家广告平台 ID |
+
+**这可能就是「莫名其妙跳到淘宝 / 京东」的原因**：`swipe_or_click` + `sensitivity: 11` + `sensorDelay: 1`，手一晃就跳。
+
+### 插件怎么做的
+
+[Coolapk-SplashAd-Block](plugins/Coolapk-SplashAd-Block.plugin) 对这 10 个键做正则替换：广告位清空、缓存时间归零、预加载关掉、误触灵敏度归零，**其余 25 个业务配置一个不动**。
+
+验证脚本已接入 CI，用的是从真实响应里裁出来的 fixture：
+
+```bash
+node tools/verify-splash.mjs
+# ✅ SplashAd.Type = ""     ✅ 保留 selectedHomeTab = "V9_HOME_TAB_HEADLINE"
+# ✅ Ad.PRELOAD    = "0"    ✅ 保留 Ad.TANX_APP_ID  = "101876"
+# ✅ 改写后 JSON 仍可解析
+```
+
+### ⚠️ 先删掉旧规则
+
+如果你之前用 `response.body.mock` 之类的方式把 `/v6/main/init` 整个替换成 `{"data":[]}`，**请删掉它**：
+
+1. 它会把首页 / Tab 配置一起干掉；
+2. 响应内容为空时，酷安很可能沿用上一份缓存的配置，`SplashAd.*` 反而一直活着 —— 这大概就是为什么 `init` 被清空了，开屏广告却还在。
+
+---
+
 ## 仓库结构
 
 ```
@@ -93,7 +148,9 @@ https://raw.githubusercontent.com/imacte/Loon-plugins/main/gallery.json
 ├── icons/                   插件图标
 ├── tools/
 │   ├── build.mjs            校验 + 生成 gallery.json 与 README 表格
+│   ├── verify-splash.mjs    用 fixture 验证开屏广告改写规则
 │   └── make_icons.py        生成图标
+├── tests/fixtures/          从真实抓包裁剪出来的测试样本
 ├── gallery.json             插件仓库索引
 └── .github/workflows/ci.yml 提交时自动校验
 ```
@@ -106,6 +163,9 @@ node tools/build.mjs
 
 # 只校验，并检查产物是否与 plugins/ 同步（CI 用）
 node tools/build.mjs --check
+
+# 用内置 fixture 验证开屏广告改写规则，断言 JSON 仍可解析且业务配置未被改动
+node tools/verify-splash.mjs
 
 # 重新生成图标
 python tools/make_icons.py

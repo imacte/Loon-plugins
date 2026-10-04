@@ -102,6 +102,9 @@ def main() -> None:
     # 规则版：深蓝 → 青，配色区分
     make_icon((38, 84, 214), (18, 168, 196), (18, 126, 160),
               os.path.join(OUT_DIR, "Taobao-Coolapk-AdBlock-Rule.png"))
+    # 酷安开屏：酷安绿 → 墨绿
+    make_icon((62, 196, 96), (18, 122, 84), (16, 96, 66),
+              os.path.join(OUT_DIR, "Coolapk-SplashAd-Block.png"))
 
 
 if __name__ == "__main__":

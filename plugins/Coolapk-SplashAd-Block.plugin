@@ -1,0 +1,61 @@
+#!name = 酷安 开屏广告拦截
+#!desc = 直接改掉酷安自己 /v6/main/init 下发的开屏广告配置（穿山甲 GroMore 聚合，site 5156243），关掉「切回前台也弹」和「广告预加载」，并把摇一摇/滑动误触的灵敏度归零。不需要拦截广告 SDK 域名，因此不怕素材被预缓存。
+#!author = imacte
+#!homepage = https://github.com/imacte/Loon-plugins
+#!icon = https://raw.githubusercontent.com/imacte/Loon-plugins/main/icons/Coolapk-SplashAd-Block.png
+#!system = iOS,iPadOS
+#!system_version = 15.0
+#!loon_version = 3.5.1(978)
+#!tag = 去广告,酷安,开屏广告
+#!type = normal
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 原理
+#
+# 酷安的开屏广告不是靠拦截 SDK 域名能解决的：抓包 32_1791120312806 里，
+# 穿山甲域名配置 tnc3-aliec2.zijieapi.com/get_domains 已被拦成 {}，
+# 酷安照样弹开屏、照样跳京东 —— 因为广告素材是「预加载」的，网络请求发生在
+# 你看不到的时候（Ad.PRELOAD = "1"）。
+#
+# 真正的开关在酷安自己的接口里。实测 /v6/main/init 的 extraDataArr 中下发：
+#   "SplashAd.Type"          : "GM_SPLASH | 5156243 | 102140761"   穿山甲 GroMore 聚合开屏
+#   "SplashAd.hType"         : "GM_SPLASH | 5156243 | 103293853"   第二个广告位
+#   "SplashAd.resumeType"    : "GM_SPLASH | 5156243 | 102140761"
+#   "SplashAd.onResume"      : 1        切回前台也弹开屏
+#   "SplashAd.Expires"       : 900      配置缓存 15 分钟
+#   "SplashAd.resumeExpires" : "60"
+#   "SplashAd.openType"      : "swipe_or_click"   滑动也算点击
+#   "SplashAd.sensitivity"   : "11"     摇一摇灵敏度，极易误触
+#   "SplashAd.sensorDelay"   : "1"
+#   "Ad.PRELOAD"             : "1"      后台提前把广告拉好
+#
+# 这些键在 JSON 里各出现 1 次，且是普通键（不是转义字符串），所以直接对 body
+# 做正则替换即可，不需要动其它字段，首页配置完好无损。
+#
+# ⚠️ 如果你之前用 response.body.mock 把整个 init 换成 {"data":[]} 来「去广告」，
+#    请把那条规则删掉：它会把首页/Tab 配置一起干掉，而且内容为空时酷安很可能
+#    沿用上一份缓存的配置，反而让 SplashAd 配置一直活着。本插件已经取代它。
+# ─────────────────────────────────────────────────────────────────────────────
+
+[Argument]
+SplashAd = switch,true,tag=关闭开屏广告位,desc=清空 SplashAd.Type/hType/resumeType，客户端不再向聚合 SDK 请求开屏
+ResumeAd = switch,true,tag=关闭切回前台弹开屏,desc=酷安默认 resumeExpires=60，每 60 秒切回前台就再弹一次
+Preload = switch,true,tag=关闭广告预加载,desc=Ad.PRELOAD=1 时广告在后台提前拉好，纯域名拦截抓不到也拦不住
+AntiMisclick = switch,true,tag=防摇一摇误触,desc=默认 sensitivity=11 且 openType=swipe_or_click，极易误触跳转淘宝/京东
+
+[Rewrite]
+
+# 1) 清空开屏广告位
+response if ${SplashAd} == true && ${url} ~= /^https:\/\/api\.coolapk\.com\/v6\/main\/init/ then response.body.replace([/"SplashAd\.Type"\s*:\s*"[^"]*"/, /"SplashAd\.hType"\s*:\s*"[^"]*"/, /"SplashAd\.resumeType"\s*:\s*"[^"]*"/], ["\"SplashAd.Type\":\"\"", "\"SplashAd.hType\":\"\"", "\"SplashAd.resumeType\":\"\""])
+
+# 2) 关掉切回前台弹开屏 + 配置缓存归零，让下次启动立刻重新拉取
+response if ${ResumeAd} == true && ${url} ~= /^https:\/\/api\.coolapk\.com\/v6\/main\/init/ then response.body.replace([/"SplashAd\.onResume"\s*:\s*1/, /"SplashAd\.Expires"\s*:\s*\d+/, /"SplashAd\.resumeExpires"\s*:\s*"[^"]*"/], ["\"SplashAd.onResume\":0", "\"SplashAd.Expires\":0", "\"SplashAd.resumeExpires\":\"0\""])
+
+# 3) 关掉广告预加载
+response if ${Preload} == true && ${url} ~= /^https:\/\/api\.coolapk\.com\/v6\/main\/init/ then response.body.replace(/"Ad\.PRELOAD"\s*:\s*"1"/, "\"Ad.PRELOAD\":\"0\"")
+
+# 4) 防误触：只认点击，灵敏度归零，传感器延迟拉长
+response if ${AntiMisclick} == true && ${url} ~= /^https:\/\/api\.coolapk\.com\/v6\/main\/init/ then response.body.replace([/"SplashAd\.openType"\s*:\s*"[^"]*"/, /"SplashAd\.sensitivity"\s*:\s*"[^"]*"/, /"SplashAd\.sensorDelay"\s*:\s*"[^"]*"/], ["\"SplashAd.openType\":\"click\"", "\"SplashAd.sensitivity\":\"0\"", "\"SplashAd.sensorDelay\":\"999\""])
+
+[MitM]
+hostname = %APPEND% api.coolapk.com
