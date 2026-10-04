@@ -12,9 +12,9 @@
 
 <!-- PLUGINS:START -->
 
-| 插件 | 说明 | 标签 | 安装 |
-| --- | --- | --- | --- |
-| **酷安 去广告** | 改掉酷安 /v6/main/init 下发的开屏广告配置（穿山甲 GroMore 聚合，site 5156243）：清空广告位、关掉「切回前台也弹」和广告预加载、把摇一摇/滑动误触灵敏度归零。不动广告 SDK 域名，因此不怕素材被预缓存。 | `去广告` `酷安` `开屏广告` | [一键导入](https://www.nsloon.com/openloon/import?plugin=https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-AdBlock.plugin) · [源文件](https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-AdBlock.plugin) |
+| 插件 | 说明 | 标签 | 一键导入 | 源文件 |
+| --- | --- | --- | --- | --- |
+| **酷安 去广告** | 改掉酷安 /v6/main/init 下发的开屏广告配置（穿山甲 GroMore 聚合，site 5156243）：清空广告位、关掉「切回前台也弹」和广告预加载、把摇一摇/滑动误触灵敏度归零。不动广告 SDK 域名，因此不怕素材被预缓存。 | `去广告` `酷安` `开屏广告` | [一键导入](https://www.nsloon.com/openloon/import?plugin=https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-AdBlock.plugin) | [源文件](https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-AdBlock.plugin) |
 
 <!-- PLUGINS:END -->
 

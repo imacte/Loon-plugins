@@ -233,11 +233,12 @@ function buildTable(plugins) {
     const importUrl = `https://www.nsloon.com/openloon/import?plugin=${raw}`;
     const tags = (p.meta.tag ?? "").split(",").map((s) => s.trim()).filter(Boolean)
       .map((t) => `\`${t}\``).join(" ");
-    return `| **${p.meta.name}** | ${p.meta.desc ?? ""} | ${tags} | [一键导入](${importUrl}) · [源文件](${raw}) |`;
+    // 一键导入与源文件分成两列，避免挤在一格里被折行
+    return `| **${p.meta.name}** | ${p.meta.desc ?? ""} | ${tags} | [一键导入](${importUrl}) | [源文件](${raw}) |`;
   });
   return [
-    "| 插件 | 说明 | 标签 | 安装 |",
-    "| --- | --- | --- | --- |",
+    "| 插件 | 说明 | 标签 | 一键导入 | 源文件 |",
+    "| --- | --- | --- | --- | --- |",
     ...rows,
   ].join("\n");
 }
