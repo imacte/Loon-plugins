@@ -6,15 +6,15 @@
 
 自用 Loon 插件合集。每个插件都基于**真实抓包**编写，规则里的每一条拦截都能对应到具体的请求记录，不堆砌网上抄来的域名清单。
 
+**约定**：插件按 App 组织，一个 App 一个插件；图标用该 App 在 App Store 的官方图标。
+
 ## 插件列表
 
 <!-- PLUGINS:START -->
 
 | 插件 | 说明 | 标签 | 安装 |
 | --- | --- | --- | --- |
-| **酷安 开屏广告拦截** | 直接改掉酷安自己 /v6/main/init 下发的开屏广告配置（穿山甲 GroMore 聚合，site 5156243），关掉「切回前台也弹」和「广告预加载」，并把摇一摇/滑动误触的灵敏度归零。不需要拦截广告 SDK 域名，因此不怕素材被预缓存。 | `去广告` `酷安` `开屏广告` | [一键导入](https://www.nsloon.com/openloon/import?plugin=https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-SplashAd-Block.plugin) · [源文件](https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-SplashAd-Block.plugin) |
-| **去广告·淘宝/天猫/酷安** | 拦截淘宝、天猫、酷安中仍在放行的广告 SDK（阿里妈妈 Tanx、穿山甲、京东联盟）、埋点上报、设备指纹与推广落地页。规则由真实抓包 30_1791116195395 生成，6 个开关可按需裁剪。 | `去广告` `淘宝` `天猫` `酷安` | [一键导入](https://www.nsloon.com/openloon/import?plugin=https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock.plugin) · [源文件](https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock.plugin) |
-| **去广告·淘宝/酷安（规则版）** | 与「去广告·淘宝/天猫/酷安」同一份域名清单，改用 Rule 规则在连接层直接拦截。不需要开启 MitM，不做证书解密，适合不想装证书或想彻底掐断广告域名的场景。 | `去广告` `淘宝` `天猫` `酷安` | [一键导入](https://www.nsloon.com/openloon/import?plugin=https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock-Rule.plugin) · [源文件](https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock-Rule.plugin) |
+| **酷安 去广告** | 改掉酷安 /v6/main/init 下发的开屏广告配置（穿山甲 GroMore 聚合，site 5156243）：清空广告位、关掉「切回前台也弹」和广告预加载、把摇一摇/滑动误触灵敏度归零。不动广告 SDK 域名，因此不怕素材被预缓存。 | `去广告` `酷安` `开屏广告` | [一键导入](https://www.nsloon.com/openloon/import?plugin=https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-AdBlock.plugin) · [源文件](https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-AdBlock.plugin) |
 
 <!-- PLUGINS:END -->
 
@@ -29,7 +29,7 @@
 Loon → 配置 → 插件 → 右上角 `+` → 从 URL 添加，粘贴插件的 raw 地址：
 
 ```
-https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock.plugin
+https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-AdBlock.plugin
 ```
 
 ### 方式三：作为插件仓库订阅
@@ -44,58 +44,16 @@ https://raw.githubusercontent.com/imacte/Loon-plugins/main/gallery.json
 
 ---
 
-## 淘宝 / 天猫 / 酷安 去广告
+## 酷安 去广告
 
-抓包样本：103 条请求 / 49 个域名，覆盖 **淘宝 10.66.30** 与 **酷安 16.6**。
+抓包样本：`32_1791120312806`（开屏广告 → 京东）、`30_1791116195395`（开屏广告 → 淘宝）。
 
-### 拦掉了什么
+### 为什么拦 SDK 域名没用
 
-| 类别 | 具体目标 |
-| --- | --- |
-| 广告 SDK | 阿里妈妈 Tanx（`sdk-config.tanx.com` 等）、穿山甲 Pangle（`webcast-open.douyin.com`、`lf-cdn-tos.bytescm.com`、`mssdk.volces.com`、`tnc*.zijieapi.com`）、京东开普勒联盟（`dg.k.jd.com`、`dgstatic.jd.com`） |
-| 广告归因 | 数盟 `idfa2.shuzilm.cn`、中国移动 IDAA `iuni.telecome.cn` |
-| 淘宝广告位 | `adashx.m.taobao.com`、`h-adashx.ut.taobao.com`、阿里妈妈 / 搜广视频素材、`amdc` 的裸 IP 直连绕过 |
-| 埋点上报 | `*.mmstat.com`（`gm` / `log` / `s-gm` / `wgo`）、`loggw-ex.alipay.com`、阿里云 SLS、`apmplus.volces.com` |
-| 设备指纹 | `fourier.taobao.com`、`cdn.ynuf.aliapp.org`、`alsc-fingerprint.ele.me` |
-
-### 两个版本的差别
-
-| | Rewrite 版 | 规则版 |
-| --- | --- | --- |
-| 原理 | `[Rewrite]` 在解密后的请求上返回假响应 | `[Rule]` 在连接层直接断连 |
-| 需要 MitM | **需要** | **不需要** |
-| 可开关 | 6 个开关，按需裁剪 | 无（Loon 插件规则不支持参数化） |
-| 适合 | 想精细控制、只要拦一部分 | 不想装证书、想彻底掐断 |
-
-### 开关说明（Rewrite 版）
-
-| 开关 | 默认 | 作用 |
-| --- | --- | --- |
-| `AdSDK` | 开 | 三家广告 SDK 与广告归因，收益最大 |
-| `Tracker` | 开 | 埋点统计与日志上报 |
-| `TaobaoAd` | 开 | 淘宝天猫广告接口 |
-| `DeviceId` | 开 | `fourier` 指纹脚本与阿里 UMID，风控影响很小 |
-| `AliSec` | **关** | 阿里安全无痕验证，拦狠了可能出现登录异常或「系统繁忙」 |
-| `Promo` | **关** | 推广弹窗与天猫落地页，会连带干掉正常活动页 |
-
-### 不会误伤的域名
-
-以下虽然也在抓包里出现，但属于正常业务，**没有**被拦截：
-
-`gw.alipayobjects.com` · `*.alicdn.com` · `mdn.alipayobjects.com` · `modeldownload.taobao.com` · `image.coolapk.com` · `avatar.coolapk.com` · `acs.m.taobao.com` · `mobilegw.alipay.com` · `119.29.29.88`（HTTPDNS）· `amdc-sibling.alipay.com.cn`（网络调度）
-
----
-
-## 酷安开屏广告（重点）
-
-抓包样本：`32_1791120312806`（跳京东）、`30_1791116195395`（跳淘宝）。
-
-### 为什么拦域名没用
-
-两个抓包对比下来结论很明确：
+两个抓包对比下来的结论很明确：
 
 - `32` 这次，穿山甲域名配置 `tnc3-aliec2.zijieapi.com/get_domains` **已经被拦成 `{}`**，酷安照样弹开屏、照样跳京东；
-- `32` 的 Coolapk 阶段总共只有 4 个请求，**完全没有广告请求**——因为广告是**预加载**的（`Ad.PRELOAD = "1"`），素材在你看不到的时候就已经拉好缓存在本地了；
+- `32` 的酷安阶段总共只有 4 个请求，**完全没有广告请求** —— 因为广告是**预加载**的（`Ad.PRELOAD = "1"`），素材在你看不到的时候就已经拉好缓存在本地了；
 - 点击跳转走的是 iOS deeplink，网络层工具拦不到 scheme。
 
 所以「拦广告 SDK 域名」只能阻止**下一次**拉取，拦不住已经在缓存里的那条广告。
@@ -120,7 +78,14 @@ https://raw.githubusercontent.com/imacte/Loon-plugins/main/gallery.json
 
 ### 插件怎么做的
 
-[Coolapk-SplashAd-Block](plugins/Coolapk-SplashAd-Block.plugin) 对这 10 个键做正则替换：广告位清空、缓存时间归零、预加载关掉、误触灵敏度归零，**其余 25 个业务配置一个不动**。
+[Coolapk-AdBlock.plugin](plugins/Coolapk-AdBlock.plugin) 对这 10 个键做正则替换：广告位清空、缓存归零、预加载关掉、误触灵敏度归零，**其余 25 个业务配置一个不动**。
+
+| 开关 | 默认 | 作用 |
+| --- | --- | --- |
+| `SplashAd` | 开 | 清空 `SplashAd.Type` / `hType` / `resumeType`，客户端不再向聚合 SDK 请求开屏 |
+| `ResumeAd` | 开 | 关掉 `onResume`（切回前台也弹）并把 `Expires` 归零 |
+| `Preload` | 开 | 关掉 `Ad.PRELOAD` |
+| `AntiMisclick` | 开 | `openType` 只认点击、`sensitivity` 归零、`sensorDelay` 拉长 |
 
 验证脚本已接入 CI，用的是从真实响应里裁出来的 fixture：
 
@@ -128,7 +93,7 @@ https://raw.githubusercontent.com/imacte/Loon-plugins/main/gallery.json
 node tools/verify-splash.mjs
 # ✅ SplashAd.Type = ""     ✅ 保留 selectedHomeTab = "V9_HOME_TAB_HEADLINE"
 # ✅ Ad.PRELOAD    = "0"    ✅ 保留 Ad.TANX_APP_ID  = "101876"
-# ✅ 改写后 JSON 仍可解析
+# ✅ 改写后 JSON 仍可解析   （10 个广告键清除，25 个业务键零改动）
 ```
 
 ### ⚠️ 先删掉旧规则
@@ -144,12 +109,12 @@ node tools/verify-splash.mjs
 
 ```
 .
-├── plugins/                 插件源文件，一个 .plugin 一个插件
-├── icons/                   插件图标
+├── plugins/                 插件源文件，一个 App 一个 .plugin
+├── icons/                   插件图标，用对应 App 的 App Store 官方图标
 ├── tools/
 │   ├── build.mjs            校验 + 生成 gallery.json 与 README 表格
 │   ├── verify-splash.mjs    用 fixture 验证开屏广告改写规则
-│   └── make_icons.py        生成图标
+│   └── fetch_app_icons.py   从 App Store 抓取 App 官方图标
 ├── tests/fixtures/          从真实抓包裁剪出来的测试样本
 ├── gallery.json             插件仓库索引
 └── .github/workflows/ci.yml 提交时自动校验
@@ -167,8 +132,8 @@ node tools/build.mjs --check
 # 用内置 fixture 验证开屏广告改写规则，断言 JSON 仍可解析且业务配置未被改动
 node tools/verify-splash.mjs
 
-# 重新生成图标
-python tools/make_icons.py
+# 抓取 App 官方图标（新增 App 时先改 tools/fetch_app_icons.py 里的 APPS）
+python tools/fetch_app_icons.py
 ```
 
 `tools/build.mjs` 会检查：
@@ -184,13 +149,17 @@ python tools/make_icons.py
 
 ## 添加新插件
 
-1. 把 `xxx.plugin` 丢进 `plugins/`，文件头写上 `#!name` / `#!desc` / `#!author` / `#!icon` / `#!tag` / `#!type`
-2. 跑 `node tools/build.mjs`
-3. 提交，CI 会自动校验
+以「给某个 App 去广告」为例：
+
+1. 在 `tools/fetch_app_icons.py` 的 `APPS` 里加上 `App 名: App Store 数字 ID`，跑 `python tools/fetch_app_icons.py` 拿到官方图标
+2. 把 `App-AdBlock.plugin` 丢进 `plugins/`，`#!icon` 指向 `icons/<App>.png`
+3. 跑到真实流量抓包，把规则依据写进文件头的注释里
+4. 跑 `node tools/build.mjs`
+5. 提交，CI 会自动校验
 
 ## 免责声明
 
-本项目仅供学习与网络调试研究使用。所有规则均来自作者本机流量的分析结果，不保证适用于其他版本的应用。请勿用于任何商业或非法用途，使用产生的一切后果由使用者自行承担。
+本项目仅供学习与网络调试研究使用。所有规则均来自作者本机流量的分析结果，不保证适用于其他版本的应用。插件图标版权归各 App 开发者所有，此处仅用于标示插件对应的 App。请勿用于任何商业或非法用途，使用产生的一切后果由使用者自行承担。
 
 ## License
 

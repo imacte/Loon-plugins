@@ -10,7 +10,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-const PLUGIN = join(ROOT, "plugins", "Coolapk-SplashAd-Block.plugin");
+const PLUGIN = join(ROOT, "plugins", "Coolapk-AdBlock.plugin");
 const FIXTURE = join(ROOT, "tests", "fixtures", "coolapk-init-splash.json");
 const CANDIDATES = [
   FIXTURE,

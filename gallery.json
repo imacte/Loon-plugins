@@ -4,46 +4,16 @@
   "homepage": "https://github.com/imacte/Loon-plugins",
   "plugins": [
     {
-      "name": "酷安 开屏广告拦截",
-      "description": "直接改掉酷安自己 /v6/main/init 下发的开屏广告配置（穿山甲 GroMore 聚合，site 5156243），关掉「切回前台也弹」和「广告预加载」，并把摇一摇/滑动误触的灵敏度归零。不需要拦截广告 SDK 域名，因此不怕素材被预缓存。",
-      "url": "https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-SplashAd-Block.plugin",
-      "icon": "https://raw.githubusercontent.com/imacte/Loon-plugins/main/icons/Coolapk-SplashAd-Block.png",
+      "name": "酷安 去广告",
+      "description": "改掉酷安 /v6/main/init 下发的开屏广告配置（穿山甲 GroMore 聚合，site 5156243）：清空广告位、关掉「切回前台也弹」和广告预加载、把摇一摇/滑动误触灵敏度归零。不动广告 SDK 域名，因此不怕素材被预缓存。",
+      "url": "https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Coolapk-AdBlock.plugin",
+      "icon": "https://raw.githubusercontent.com/imacte/Loon-plugins/main/icons/Coolapk.png",
       "homepage": "https://github.com/imacte/Loon-plugins",
       "author": "imacte",
       "tag": [
         "去广告",
         "酷安",
         "开屏广告"
-      ],
-      "type": "normal"
-    },
-    {
-      "name": "去广告·淘宝/天猫/酷安",
-      "description": "拦截淘宝、天猫、酷安中仍在放行的广告 SDK（阿里妈妈 Tanx、穿山甲、京东联盟）、埋点上报、设备指纹与推广落地页。规则由真实抓包 30_1791116195395 生成，6 个开关可按需裁剪。",
-      "url": "https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock.plugin",
-      "icon": "https://raw.githubusercontent.com/imacte/Loon-plugins/main/icons/Taobao-Coolapk-AdBlock.png",
-      "homepage": "https://github.com/imacte/Loon-plugins",
-      "author": "imacte",
-      "tag": [
-        "去广告",
-        "淘宝",
-        "天猫",
-        "酷安"
-      ],
-      "type": "normal"
-    },
-    {
-      "name": "去广告·淘宝/酷安（规则版）",
-      "description": "与「去广告·淘宝/天猫/酷安」同一份域名清单，改用 Rule 规则在连接层直接拦截。不需要开启 MitM，不做证书解密，适合不想装证书或想彻底掐断广告域名的场景。",
-      "url": "https://raw.githubusercontent.com/imacte/Loon-plugins/main/plugins/Taobao-Coolapk-AdBlock-Rule.plugin",
-      "icon": "https://raw.githubusercontent.com/imacte/Loon-plugins/main/icons/Taobao-Coolapk-AdBlock-Rule.png",
-      "homepage": "https://github.com/imacte/Loon-plugins",
-      "author": "imacte",
-      "tag": [
-        "去广告",
-        "淘宝",
-        "天猫",
-        "酷安"
       ],
       "type": "normal"
     }

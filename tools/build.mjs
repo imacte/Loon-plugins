@@ -251,9 +251,7 @@ const files = readdirSync(PLUGIN_DIR).filter((f) => f.endsWith(".plugin")).sort(
  * 不在名单里的插件按文件名排在后面，新增插件时把它加进来即可。
  */
 const DISPLAY_ORDER = [
-  "Coolapk-SplashAd-Block.plugin",
-  "Taobao-Coolapk-AdBlock.plugin",
-  "Taobao-Coolapk-AdBlock-Rule.plugin",
+  "Coolapk-AdBlock.plugin",
 ];
 files.sort((a, b) => {
   const ia = DISPLAY_ORDER.indexOf(a);

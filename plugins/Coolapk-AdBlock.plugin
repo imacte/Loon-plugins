@@ -1,8 +1,8 @@
-#!name = 酷安 开屏广告拦截
-#!desc = 直接改掉酷安自己 /v6/main/init 下发的开屏广告配置（穿山甲 GroMore 聚合，site 5156243），关掉「切回前台也弹」和「广告预加载」，并把摇一摇/滑动误触的灵敏度归零。不需要拦截广告 SDK 域名，因此不怕素材被预缓存。
+#!name = 酷安 去广告
+#!desc = 改掉酷安 /v6/main/init 下发的开屏广告配置（穿山甲 GroMore 聚合，site 5156243）：清空广告位、关掉「切回前台也弹」和广告预加载、把摇一摇/滑动误触灵敏度归零。不动广告 SDK 域名，因此不怕素材被预缓存。
 #!author = imacte
 #!homepage = https://github.com/imacte/Loon-plugins
-#!icon = https://raw.githubusercontent.com/imacte/Loon-plugins/main/icons/Coolapk-SplashAd-Block.png
+#!icon = https://raw.githubusercontent.com/imacte/Loon-plugins/main/icons/Coolapk.png
 #!system = iOS,iPadOS
 #!system_version = 15.0
 #!loon_version = 3.5.1(978)
